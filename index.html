@@ -705,6 +705,10 @@
         overflow-x: hidden;
         overscroll-behavior-x: none;
       }
+
+      .hidden {
+        display: none !important;
+      }
     </style>
   </head>
   <body class="locked">
@@ -971,7 +975,12 @@
 
         <div class="angpao-card" data-aos="zoom-in">
           <!-- Rekening 1 -->
-          <div class="bank-info" data-aos="fade-up" data-aos-delay="100">
+          <div
+            class="bank-info"
+            id="rekening-cowo"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
             <span class="bank-name">BANK BCA</span>
             <div class="acc-number-container">
               <button
@@ -981,9 +990,9 @@
               >
                 Tampilkan Rekening
               </button>
-              <span class="acc-number" id="val-rek1">1234567890</span>
+              <span class="acc-number" id="val-rek1">6140934206</span>
             </div>
-            <p>A/N AHMAD MINAN N.</p>
+            <p>A/N AHMAD MINAN NURROHMAN</p>
             <div class="copy-action" id="copy-rek1" style="display: none">
               <button class="btn-copy" onclick="copyText('val-rek1')">
                 Salin Nomor
@@ -999,8 +1008,13 @@
           </div>
 
           <!-- Rekening 2 -->
-          <div class="bank-info" data-aos="fade-up" data-aos-delay="200">
-            <span class="bank-name">BANK MANDIRI</span>
+          <div
+            class="bank-info"
+            id="rekening-cewe"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <span class="bank-name">BANK BCA</span>
             <div class="acc-number-container">
               <button
                 class="btn-reveal"
@@ -1009,7 +1023,7 @@
               >
                 Tampilkan Rekening
               </button>
-              <span class="acc-number" id="val-rek2">09876543210</span>
+              <span class="acc-number" id="val-rek2">5537057098</span>
             </div>
             <p>A/N DEVINA AZZAHRA</p>
             <div class="copy-action" id="copy-rek2" style="display: none">
@@ -1226,14 +1240,29 @@
         }, 2000);
       }
 
-      // Guest Name
+      // Ambil semua query param SEKALI
       const params = new URLSearchParams(window.location.search);
+
+      // Guest Name
       const guest = params.get("to");
       if (guest) {
         document.getElementById("nama-tamu-welcome").innerText = guest;
       }
 
-      // Countdown
+      // From (cowo / cewe)
+      const from = params.get("from");
+
+      const rekCowo = document.getElementById("rekening-cowo");
+      const rekCewe = document.getElementById("rekening-cewe");
+
+      if (rekCowo && rekCewe) {
+        if (from === "cowo") {
+          rekCewe.style.display = "none";
+        } else if (from === "cewe") {
+          rekCowo.style.display = "none";
+        }
+      }
+      //countdown
       const weddingDate = new Date("Feb 10, 2026 09:00:00").getTime();
       setInterval(() => {
         const now = new Date().getTime();

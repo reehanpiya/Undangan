@@ -6,51 +6,108 @@
     <title>Admin Undangan</title>
 
     <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      .grid {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .box {
+        flex: 1;
+        min-width: 280px;
+      }
+      textarea {
+        width: 100%;
+      }
+      .hasil {
+        background: #f4f4f4;
+        padding: 10px;
+        margin-top: 10px;
+        word-break: break-all;
+      }
+    </style>
   </head>
+
   <body>
     <section class="content">
       <h2>Admin Undangan</h2>
       <p>Masukkan nama tamu (1 baris = 1 nama)</p>
 
-      <textarea
-        id="nama-tamu-welcome"
-        rows="10"
-        style="width: 100%; max-width: 500px"
-      ></textarea>
-      <br /><br />
+      <div class="grid">
+        <!-- PIHAK COWO -->
+        <div class="box">
+          <h3>Pihak Cowo</h3>
+          <textarea
+            id="nama-tamu-welcome"
+            rows="10"
+            placeholder="Andi Saputra"
+          ></textarea>
 
+          <h4>Link Undangan Cowo</h4>
+          <div id="hasil-link-cowo" class="hasil"></div>
+        </div>
+
+        <!-- PIHAK CEWE -->
+        <div class="box">
+          <h3>Pihak Cewe</h3>
+          <textarea
+            id="nama-tamu-cewe"
+            rows="10"
+            placeholder="Siti Aminah"
+          ></textarea>
+
+          <h4>Link Undangan Cewe</h4>
+          <div id="hasil-link-cewe" class="hasil"></div>
+        </div>
+      </div>
+
+      <br />
       <button id="generate-btn">Generate Link</button>
-
-      <h3>Hasil Link Undangan</h3>
-      <div id="hasil-link"></div>
     </section>
 
     <script>
       const btn = document.getElementById("generate-btn");
-      const output = document.getElementById("hasil-link");
 
       btn.addEventListener("click", () => {
-        const textarea = document.getElementById("nama-tamu-welcome").value;
-        const daftarNama = textarea.split("\n");
+        const cowoText = document
+          .getElementById("nama-tamu-welcome")
+          .value.split("\n");
+
+        const ceweText = document
+          .getElementById("nama-tamu-cewe")
+          .value.split("\n");
 
         const baseURL =
           window.location.origin +
           window.location.pathname.replace("admin.html", "index.html");
 
-        let html = "<ol>";
+        let htmlCowo = "<ol>";
+        let htmlCewe = "<ol>";
 
-        daftarNama.forEach((nama) => {
-          const cleanName = nama.trim();
-          if (cleanName !== "") {
-            const encodedName = encodeURIComponent(cleanName);
-            const link = `${baseURL}?to=${encodedName}`;
-
-            html += `<li>${cleanName}<br><a href="${link}" target="_blank">${link}</a></li><br>`;
+        cowoText.forEach((nama) => {
+          const clean = nama.trim();
+          if (clean !== "") {
+            const encoded = encodeURIComponent(clean);
+            const link = `${baseURL}?to=${encoded}&from=cowo`;
+            htmlCowo += `<li>${clean}<br><a href="${link}" target="_blank">${link}</a></li>`;
           }
         });
 
-        html += "</ol>";
-        output.innerHTML = html;
+        ceweText.forEach((nama) => {
+          const clean = nama.trim();
+          if (clean !== "") {
+            const encoded = encodeURIComponent(clean);
+            const link = `${baseURL}?to=${encoded}&from=cewe`;
+            htmlCewe += `<li>${clean}<br><a href="${link}" target="_blank">${link}</a></li>`;
+          }
+        });
+
+        htmlCowo += "</ol>";
+        htmlCewe += "</ol>";
+
+        document.getElementById("hasil-link-cowo").innerHTML = htmlCowo;
+        document.getElementById("hasil-link-cewe").innerHTML = htmlCewe;
       });
     </script>
   </body>
