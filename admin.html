@@ -67,48 +67,109 @@
     </section>
 
     <script>
-      const btn = document.getElementById("generate-btn");
+      const templatePesan = (nama, link) => `
+Assalamualaikum Warahmatullahi Wabarakatuh
 
-      btn.addEventListener("click", () => {
-        const cowoText = document
-          .getElementById("nama-tamu-welcome")
-          .value.split("\n");
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i ${nama}, teman sekaligus sahabat, untuk menghadiri acara pernikahan kami.
 
-        const ceweText = document
-          .getElementById("nama-tamu-cewe")
+Berikut link undangan kami, untuk info lengkap dari acara, bisa kunjungi :
+
+${link}
+
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
+
+Wassalamualaikum Warahmatullahi Wabarakatuh
+
+Terima Kasih
+
+Hormat kami,
+Ahmad & Devina
+
+________
+
+Simpan nomor ini jika link tidak dapat disentuh atau salin link ke browser untuk membuka undangan
+Harap dibuka pada aplikasi Chrome
+`;
+
+      function copyText(id) {
+        const el = document.getElementById(id);
+        el.select();
+        el.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        alert("Pesan berhasil disalin!");
+      }
+
+      function generatePesan(type) {
+        const textareaId =
+          type === "cowo" ? "nama-tamu-welcome" : "nama-tamu-cewe";
+        const hasilId = type === "cowo" ? "hasil-link-cowo" : "hasil-link-cewe";
+
+        const daftarNama = document
+          .getElementById(textareaId)
           .value.split("\n");
 
         const baseURL =
           window.location.origin +
           window.location.pathname.replace("admin.html", "index.html");
 
-        let htmlCowo = "<ol>";
-        let htmlCewe = "<ol>";
+        let html = `
+      <table border="1" cellpadding="8" cellspacing="0" width="100%">
+        <tr>
+          <th>Nama</th>
+          <th>Pesan WhatsApp</th>
+          <th>Aksi</th>
+        </tr>
+    `;
 
-        cowoText.forEach((nama) => {
+        daftarNama.forEach((nama, index) => {
           const clean = nama.trim();
           if (clean !== "") {
-            const encoded = encodeURIComponent(clean);
-            const link = `${baseURL}?to=${encoded}&from=cowo`;
-            htmlCowo += `<li>${clean}<br><a href="${link}" target="_blank">${link}</a></li>`;
+            const namaUpper = clean.toUpperCase();
+            const encoded = encodeURIComponent(namaUpper);
+            const link = `${baseURL}?to=${encoded}&from=${type}&v=${index + 1}`;
+
+            const pesan = templatePesan(namaUpper, link);
+            const textareaIdUnik = `pesan-${type}-${index}`;
+
+            html += `
+          <tr>
+            <td><strong>${namaUpper}</strong></td>
+            <td>
+              <textarea
+                id="${textareaIdUnik}"
+                rows="12"
+                style="width:100%"
+                readonly
+              >${pesan}</textarea>
+            </td>
+            <td>
+              <button onclick="copyText('${textareaIdUnik}')">
+                Copy
+              </button>
+            </td>
+          </tr>
+        `;
           }
         });
 
-        ceweText.forEach((nama) => {
-          const clean = nama.trim();
-          if (clean !== "") {
-            const encoded = encodeURIComponent(clean);
-            const link = `${baseURL}?to=${encoded}&from=cewe`;
-            htmlCewe += `<li>${clean}<br><a href="${link}" target="_blank">${link}</a></li>`;
-          }
-        });
+        html += "</table>";
+        document.getElementById(hasilId).innerHTML = html;
+      }
 
-        htmlCowo += "</ol>";
-        htmlCewe += "</ol>";
+      // ganti tombol lama → dua tombol terpisah
+      document.getElementById("generate-btn").remove();
 
-        document.getElementById("hasil-link-cowo").innerHTML = htmlCowo;
-        document.getElementById("hasil-link-cewe").innerHTML = htmlCewe;
-      });
+      const btnCowo = document.createElement("button");
+      btnCowo.innerText = "Generate Tamu Cowo";
+      btnCowo.onclick = () => generatePesan("cowo");
+
+      const btnCewe = document.createElement("button");
+      btnCewe.innerText = "Generate Tamu Cewe";
+      btnCewe.onclick = () => generatePesan("cewe");
+
+      const content = document.querySelector(".content");
+      content.appendChild(btnCowo);
+      content.appendChild(btnCewe);
     </script>
   </body>
 </html>
