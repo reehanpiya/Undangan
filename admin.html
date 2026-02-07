@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Undangan</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <section class="content">
+      <h2>Admin Undangan</h2>
+      <p>Masukkan nama tamu (1 baris = 1 nama)</p>
+
+      <textarea
+        id="nama-tamu-welcome"
+        rows="10"
+        style="width: 100%; max-width: 500px"
+      ></textarea>
+      <br /><br />
+
+      <button id="generate-btn">Generate Link</button>
+
+      <h3>Hasil Link Undangan</h3>
+      <div id="hasil-link"></div>
+    </section>
+
+    <script>
+      const btn = document.getElementById("generate-btn");
+      const output = document.getElementById("hasil-link");
+
+      btn.addEventListener("click", () => {
+        const textarea = document.getElementById("nama-tamu-welcome").value;
+        const daftarNama = textarea.split("\n");
+
+        const baseURL =
+          window.location.origin +
+          window.location.pathname.replace("admin.html", "index.html");
+
+        let html = "<ol>";
+
+        daftarNama.forEach((nama) => {
+          const cleanName = nama.trim();
+          if (cleanName !== "") {
+            const encodedName = encodeURIComponent(cleanName);
+            const link = `${baseURL}?to=${encodedName}`;
+
+            html += `<li>${cleanName}<br><a href="${link}" target="_blank">${link}</a></li><br>`;
+          }
+        });
+
+        html += "</ol>";
+        output.innerHTML = html;
+      });
+    </script>
+  </body>
+</html>
